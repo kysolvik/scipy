@@ -34,6 +34,7 @@ from . import _ni_support
 from . import _ni_label
 from . import _nd_image
 from . import morphology
+from scipy.stats import mode as sp_mode
 
 __all__ = ['label', 'find_objects', 'labeled_comprehension', 'sum', 'mean',
            'variance', 'standard_deviation', 'minimum', 'maximum', 'median',
@@ -789,9 +790,9 @@ def standard_deviation(input, labels=None, index=None):
 
 def _select(input, labels=None, index=None, find_min=False, find_max=False,
             find_min_positions=False, find_max_positions=False,
-            find_median=False):
+            find_median=False, find_mode=False):
     """Returns min, max, or both, plus their positions (if requested), and
-    median."""
+    median and mode."""
 
     input = numpy.asanyarray(input)
 
@@ -812,6 +813,8 @@ def _select(input, labels=None, index=None, find_min=False, find_max=False,
             result += [positions[vals == vals.max()][0]]
         if find_median:
             result += [numpy.median(vals)]
+        if find_mode:
+            result += [sp_mode(vals, nan_policy='omit')]
         return result
 
     if labels is None:
